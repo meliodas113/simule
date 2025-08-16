@@ -1,13 +1,19 @@
 import { faker } from "@faker-js/faker";
 import { ArrayOptions } from "./types";
 
+// Optimize faker imports for tree shaking
+const {
+  number: { int },
+  helpers: { arrayElement },
+} = faker;
+
 /**
  * Returns a random element from the provided values.
  * @param values Array of values to choose from.
  * @returns A random value from the array.
  */
 export function isOneOf<T>(values: T[]): T {
-  return faker.helpers.arrayElement(values);
+  return arrayElement(values);
 }
 
 /**
@@ -23,7 +29,7 @@ export function arrayOf<T>(
   const min = Math.max(options.min ?? 3, 0);
   const max = Math.min(options.max ?? 1000, 1000);
   const clampedMin = Math.min(min, max); // Clamp min to max
-  const length = faker.number.int({ min: clampedMin, max });
+  const length = int({ min: clampedMin, max });
   return Array(length)
     .fill(null)
     .map(() => generator());

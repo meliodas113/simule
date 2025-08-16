@@ -1,12 +1,7 @@
-/** Type for override values: can be a fixed value or a generator function. */
 export type OverrideValue = any | (() => any);
-/** Options for the make function, allowing field overrides. */
 export interface MakeOptions {
-    /** Record of field names to override values or generators. */
     overrides?: Record<string, OverrideValue>;
 }
-/** Type definitions for testing simule. */
-/** Type definitions for testing simule and Next.js integration. */
 export type TagItem = {
     name: string;
     value: number;
@@ -38,11 +33,8 @@ export type WithUnion = {
 export type WithOptional = {
     tags?: string[];
 };
-/** Options for array generation. */
 export interface ArrayOptions {
     min: number;
     max: number;
 }
-/** Override value or function for a field. */
 export type Override = any | (() => any);
-//# sourceMappingURL=types.d.ts.map

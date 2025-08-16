@@ -10,7 +10,12 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "declarationMap": true
+    "declarationMap": true,
+    "importHelpers": true,
+    "noEmitHelpers": false,
+    "removeComments": false,
+    "sourceMap": true,
+    "importsNotUsedAsValues": "remove"
   },
   "include": ["src/**/*", "types.ts"],
   "exclude": ["node_modules", "dist", "tests/**/*", "example.ts"]

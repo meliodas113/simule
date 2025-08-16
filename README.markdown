@@ -19,17 +19,23 @@ yarn add simule
 Ensure your project has a `tsconfig.json` and your types are defined in included files.
 
 ```ts
-import { make, arrayOf, isOneOf } from 'simule';
+import { make, arrayOf, isOneOf } from "simule";
 
-type Product = { id: string; title: string | null; price: number; tags?: TagItem[]; inStock: boolean };
+type Product = {
+  id: string;
+  title: string | null;
+  price: number;
+  tags?: TagItem[];
+  inStock: boolean;
+};
 type TagItem = { name: string; value: number };
 
-const fixture = make<Product>('Product', {
+const fixture = make<Product>("Product", {
   overrides: {
-    tags: arrayOf(() => make<TagItem>('TagItem'), { min: 5, max: 100 }),
-    title: isOneOf(['Title 1', 'Title 2']),
-    price: 9.99
-  }
+    tags: arrayOf(() => make<TagItem>("TagItem"), { min: 5, max: 100 }),
+    title: isOneOf(["Title 1", "Title 2"]),
+    price: 9.99,
+  },
 });
 ```
 
@@ -42,6 +48,33 @@ const fixture = make<Product>('Product', {
 - **Custom types**: Throws if no override is provided for custom types; use `() => make<Custom>('Custom')`.
 - **OneOf**: Use `isOneOf([values])` for random selection from a list.
 - **Overrides**: Supports fixed values or generator functions for specific fields.
+
+## Development & Build
+
+### Build Commands
+
+```bash
+# Development build (with source maps and comments)
+npm run build
+
+# Production build (optimized, no source maps, no comments)
+npm run build:prod
+
+# Bundle analysis
+npm run analyze
+
+# Size check
+npm run size
+```
+
+### Bundle Optimization
+
+Simule is optimized for production use with:
+
+- **Tree Shaking Support**: `"sideEffects": false` for better bundle optimization
+- **ES Modules**: Full ES module support for modern bundlers
+- **Production Builds**: Separate production configuration for minimal bundle size
+- **NPM Package Size**: Only **4.9 kB** (compressed) / **13.0 kB** (unpacked)
 
 ## Limitations
 
@@ -63,3 +96,7 @@ npm test
 # Using Yarn
 yarn test
 ```
+
+## Performance & Optimization
+
+For detailed information about the optimizations implemented, see [OPTIMIZATION.md](./OPTIMIZATION.md).

@@ -1,7 +1,16 @@
-import { Type, Symbol } from "ts-morph";
+import { Type } from "ts-morph";
 import { faker } from "@faker-js/faker";
 import { findTypeByName } from "./projectLoader";
 import { ArrayOptions, Override } from "./types";
+
+// Optimize faker imports for tree shaking
+const {
+  string: { uuid },
+  lorem: { word },
+  number: { int, float },
+  datatype: { boolean },
+  helpers: { arrayElement },
+} = faker;
 
 /**
  * Generates a fixture for a given TypeScript type.
@@ -34,7 +43,7 @@ function generateForType(
       );
     }
     const options: ArrayOptions = { min: 3, max: 8 };
-    const arrayLength = faker.number.int({
+    const arrayLength = int({
       min: options.min,
       max: options.max,
     });
@@ -48,15 +57,15 @@ function generateForType(
   // Handle primitive types
   if (type.isString()) {
     if (fieldName.toLowerCase() === "id") {
-      return faker.string.uuid();
+      return uuid();
     }
-    return faker.lorem.word();
+    return word();
   }
   if (type.isNumber()) {
-    return faker.number.int({ min: 0, max: 100 });
+    return int({ min: 0, max: 100 });
   }
   if (type.isBoolean()) {
-    return faker.datatype.boolean();
+    return boolean();
   }
   if (type.isNull()) {
     return null;
@@ -72,11 +81,8 @@ function generateForType(
       return undefined;
     }
     const nonNullTypes = unionTypes.filter((t) => !t.isNull());
-    if (
-      nonNullTypes.length > 0 &&
-      faker.datatype.float({ min: 0, max: 1 }) > 0.2
-    ) {
-      const randomType = faker.helpers.arrayElement(nonNullTypes);
+    if (nonNullTypes.length > 0 && float({ min: 0, max: 1 }) > 0.2) {
+      const randomType = arrayElement(nonNullTypes);
       return generateForType(
         randomType,
         fieldName,
@@ -110,11 +116,7 @@ function generateForType(
       const propType = prop.getTypeAtLocation(prop.getValueDeclaration()!);
       const isOptional = prop.isOptional();
 
-      if (
-        isOptional &&
-        !isRoot &&
-        faker.datatype.float({ min: 0, max: 1 }) < 0.3
-      ) {
+      if (isOptional && !isRoot && float({ min: 0, max: 1 }) < 0.3) {
         continue;
       }
 
