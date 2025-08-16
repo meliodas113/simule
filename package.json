@@ -1,23 +1,32 @@
 {
   "name": "simule",
   "version": "1.0.0",
-  "description": "A fixture generator for TypeScript types using faker.js and ts-morph for runtime type inference. Compatible with npm and Yarn.",
+  "description": "A TypeScript fixture generator using ts-morph and faker.js for runtime type inference.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "license": "MIT",
+  "keywords": [
+    "typescript",
+    "fixture",
+    "faker",
+    "generator",
+    "ts-morph"
+  ],
+  "author": "Anupam Srivastava",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meliodas113/simule.git"
+  },
+  "bugs": {
+    "url": "https://github.com/meliodas113/simule/issues"
+  },
+  "homepage": "https://github.com/meliodas113/simule/blob/main/README.markdown",
   "scripts": {
     "build": "tsc",
     "test": "jest",
     "prepublishOnly": "tsc"
   },
-  "keywords": [
-    "fixture",
-    "faker",
-    "typescript",
-    "generator"
-  ],
-  "author": "Your Name",
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
     "ts-morph": "^23.0.0"
@@ -31,5 +40,10 @@
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "node"
-  }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ]
 }
