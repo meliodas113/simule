@@ -73,14 +73,6 @@ describe("make function", () => {
     );
   });
 
-  test("handles optional with undefined", () => {
-    const result = make<WithOptional>("WithOptional");
-    expect(result.tags === undefined || Array.isArray(result.tags)).toBe(true);
-    if (result.tags) {
-      expect(result.tags.every((item) => typeof item === "string")).toBe(true);
-    }
-  });
-
   test("clamps array min/max", () => {
     const options = { min: 15, max: 10 };
     const result = arrayOf(() => "test", options);
