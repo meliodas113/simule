@@ -31,7 +31,10 @@ console.log("Fixture with array override:", fixture2);
 /** Override with min only for array. */
 const fixture3 = make<Product>("Product", {
   overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), { min: 5 }),
+    tags: arrayOf(() => make<TagItem>("TagItem"), {
+      min: 5,
+      max: 0,
+    }),
   },
 });
 console.log("Fixture with min only:", fixture3);
@@ -39,7 +42,10 @@ console.log("Fixture with min only:", fixture3);
 /** Override with max only for array. */
 const fixture4 = make<Product>("Product", {
   overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), { max: 300 }),
+    tags: arrayOf(() => make<TagItem>("TagItem"), {
+      max: 300,
+      min: 0,
+    }),
   },
 });
 console.log("Fixture with max only:", fixture4);
@@ -48,7 +54,10 @@ console.log("Fixture with max only:", fixture4);
 const fixture5 = make<Product>("Product", {
   overrides: {
     title: isOneOf(["Title 1", "Title 2"]),
-    tags: arrayOf(() => make<TagItem>("TagItem"), {}),
+    tags: arrayOf(() => make<TagItem>("TagItem"), {
+      min: 0,
+      max: 0,
+    }),
   },
 });
 console.log("Fixture with isOneOf:", fixture5);
@@ -57,7 +66,10 @@ console.log("Fixture with isOneOf:", fixture5);
 const fixture6 = make<Product>("Product", {
   overrides: {
     price: 9.99,
-    tags: arrayOf(() => make<TagItem>("TagItem"), {}),
+    tags: arrayOf(() => make<TagItem>("TagItem"), {
+      min: 0,
+      max: 0,
+    }),
   },
 });
 console.log("Fixture with fixed price:", fixture6);
@@ -65,7 +77,10 @@ console.log("Fixture with fixed price:", fixture6);
 /** Handling null/undefined for union or optional fields. */
 const fixture7 = make<Product>("Product", {
   overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), {}),
+    tags: arrayOf(() => make<TagItem>("TagItem"), {
+      min: 0,
+      max: 0,
+    }),
   },
 });
 console.log("Fixture possibly with null/undefined:", fixture7);
