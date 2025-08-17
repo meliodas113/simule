@@ -1,9 +1,14 @@
 /** Example usage of the simule package. */
-import { make, arrayOf, isOneOf } from "./src/index";
+import {
+  make,
+  arrayOf,
+  isOneOf,
+  makeDynamic,
+  arrayOf as arrayOfDynamic,
+  isOneOf as isOneOfDynamic,
+} from "simule";
 
-/** Example custom type. */
-type TagItem = { name: string; value: number };
-/** Example product type with various field types. */
+// Example 1: Node.js version (requires ts-morph, works with TypeScript files)
 type Product = {
   id: string;
   title: string | null;
@@ -12,78 +17,107 @@ type Product = {
   inStock: boolean;
 };
 
-/** Basic usage: throws if custom types (e.g., TagItem) are used without overrides. */
-try {
-  const fixture1 = make<Product>("Product");
-  console.log("Basic fixture:", fixture1);
-} catch (e) {
-  console.error("Expected error for custom type:", (e as Error).message);
+type TagItem = { name: string; value: number };
+
+// This works in Node.js environments with tsconfig.json
+// const fixture = make<Product>("Product", {
+//   overrides: {
+//     tags: arrayOf(() => make<TagItem>("TagItem"), { min: 5, max: 100 }),
+//     title: isOneOf(["Title 1", "Title 2"]),
+//     price: 9.99,
+//   },
+// });
+
+// Example 2: Browser version (works anywhere, no ts-morph dependency)
+interface BrowserProduct {
+  id: string;
+  title: string | null;
+  price: number;
+  tags?: BrowserTagItem[];
+  inStock: boolean;
 }
 
-/** Override for custom array type with min/max. */
-const fixture2 = make<Product>("Product", {
-  overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), { min: 5, max: 100 }),
-  },
-});
-console.log("Fixture with array override:", fixture2);
+interface BrowserTagItem {
+  name: string;
+  value: number;
+  isActive: boolean;
+}
 
-/** Override with min only for array. */
-const fixture3 = make<Product>("Product", {
-  overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), {
-      min: 5,
-      max: 0,
-    }),
-  },
-});
-console.log("Fixture with min only:", fixture3);
+// Create template object that matches your interface
+const ProductTemplate: BrowserProduct = {
+  id: "", // Will generate UUID
+  title: "", // Will generate random string
+  price: 0, // Will generate random number
+  tags: [], // Will generate array of TagItems
+  inStock: false, // Will generate random boolean
+};
 
-/** Override with max only for array. */
-const fixture4 = make<Product>("Product", {
+// Generate fixture using the dynamic browser solution
+const browserFixture = makeDynamic(ProductTemplate, {
   overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), {
-      max: 300,
-      min: 0,
-    }),
-  },
-});
-console.log("Fixture with max only:", fixture4);
-
-/** Using isOneOf for a field. */
-const fixture5 = make<Product>("Product", {
-  overrides: {
-    title: isOneOf(["Title 1", "Title 2"]),
-    tags: arrayOf(() => make<TagItem>("TagItem"), {
-      min: 0,
-      max: 0,
-    }),
-  },
-});
-console.log("Fixture with isOneOf:", fixture5);
-
-/** Fixed value override. */
-const fixture6 = make<Product>("Product", {
-  overrides: {
+    title: isOneOfDynamic(["Title 1", "Title 2"]),
     price: 9.99,
-    tags: arrayOf(() => make<TagItem>("TagItem"), {
-      min: 0,
-      max: 0,
-    }),
+    tags: arrayOfDynamic(
+      () =>
+        makeDynamic({
+          name: "",
+          value: 0,
+          isActive: false,
+        }),
+      { min: 5, max: 10 }
+    ),
   },
 });
-console.log("Fixture with fixed price:", fixture6);
 
-/** Handling null/undefined for union or optional fields. */
-const fixture7 = make<Product>("Product", {
+console.log("Browser Product Fixture:", browserFixture);
+
+// Example 3: Different types work automatically
+interface User {
+  id: string;
+  email: string;
+  profile: {
+    firstName: string;
+    lastName: string;
+    age: number;
+    preferences: string[];
+  };
+  isVerified: boolean;
+  lastLogin: Date | null;
+}
+
+const UserTemplate: User = {
+  id: "",
+  email: "",
+  profile: {
+    firstName: "",
+    lastName: "",
+    age: 0,
+    preferences: [],
+  },
+  isVerified: false,
+  lastLogin: null,
+};
+
+const userFixture = makeDynamic(UserTemplate, {
   overrides: {
-    tags: arrayOf(() => make<TagItem>("TagItem"), {
-      min: 0,
-      max: 0,
-    }),
+    email: "user@example.com",
+    age: 25,
   },
 });
-console.log("Fixture possibly with null/undefined:", fixture7);
 
-/** Verify ID is a UUID. */
-console.log("ID should be UUID:", fixture7.id);
+console.log("User Fixture:", userFixture);
+
+// Example 4: Built-in types work too
+const StringArrayTemplate = [""]; // Will generate array of random strings
+const NumberArrayTemplate = [0]; // Will generate array of random numbers
+const BooleanArrayTemplate = [false]; // Will generate array of random booleans
+
+const stringArray = makeDynamic(StringArrayTemplate);
+const numberArray = makeDynamic(NumberArrayTemplate);
+const booleanArray = makeDynamic(BooleanArrayTemplate);
+
+console.log("String Array:", stringArray);
+console.log("Number Array:", numberArray);
+console.log("Boolean Array:", booleanArray);
+
+// The beauty: NO HARDCODING! Works with ANY type you provide!

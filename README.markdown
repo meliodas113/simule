@@ -2,6 +2,8 @@
 
 A TypeScript fixture generator using runtime type inference with ts-morph and faker.js.
 
+> ⚠️ **Important**: This package is designed for **Node.js environments only**. It cannot be used in browsers due to its dependency on `ts-morph` which requires Node.js file system access.
+
 ## Installation
 
 Install using npm or Yarn:
@@ -15,6 +17,8 @@ yarn add simule
 ```
 
 ## Usage
+
+**⚠️ Node.js Only**: This package must be used in a Node.js environment (not in browsers).
 
 Ensure your project has a `tsconfig.json` and your types are defined in included files.
 
@@ -38,6 +42,63 @@ const fixture = make<Product>("Product", {
   },
 });
 ```
+
+## Browser-Compatible Version
+
+For browser environments, use the dynamic version that works with ANY type:
+
+```ts
+import { makeDynamic, arrayOf, isOneOf } from "simule/browser";
+
+interface Product {
+  id: string;
+  title: string | null;
+  price: number;
+  tags?: TagItem[];
+  inStock: boolean;
+}
+
+interface TagItem {
+  name: string;
+  value: number;
+}
+
+// Create template object that matches your interface
+const ProductTemplate: Product = {
+  id: "", // Will generate UUID
+  title: "", // Will generate random string
+  price: 0, // Will generate random number
+  tags: [], // Will generate array of TagItems
+  inStock: false, // Will generate random boolean
+};
+
+// Generate fixtures using the dynamic solution
+const fixture = makeDynamic(ProductTemplate, {
+  overrides: {
+    title: isOneOf(["Title 1", "Title 2"]),
+    price: 9.99,
+  },
+});
+```
+
+### Browser Version Features
+
+- **No Node.js Dependencies**: Works in any JavaScript environment
+- **Works with ANY Type**: No hardcoding - works with any interface you define
+- **Automatic Type Inference**: Analyzes your template and generates appropriate data
+- **Smart Field Detection**: Automatically detects ID fields, email fields, price fields, etc.
+- **Complex Type Support**: Handles nested objects, arrays, unions, and custom types
+- **Type Safety**: Full TypeScript support
+- **No Metadata Required**: Just create template objects and get fixtures
+
+See `example.ts` for comprehensive examples.
+
+## Environment Requirements
+
+- **Node.js**: Required for main package (version 14+ recommended)
+- **TypeScript Project**: Must have a `tsconfig.json` file (main package only)
+- **File System Access**: Package reads TypeScript files from disk (main package only)
+- **Browser Compatible**: Use `simule/browser` for browser environments
 
 ## Features
 
@@ -78,6 +139,7 @@ Simule is optimized for production use with:
 
 ## Limitations
 
+- **Node.js Only**: Main package cannot be used in browser environments
 - Requires type name as string argument (e.g., `make<Product>('Product')`).
 - Assumes unique type names in the project.
 - Must run in a TypeScript project with a `tsconfig.json`.
@@ -100,3 +162,12 @@ yarn test
 ## Performance & Optimization
 
 For detailed information about the optimizations implemented, see [OPTIMIZATION.md](./OPTIMIZATION.md).
+
+## Browser Alternative
+
+If you need a browser-compatible fixture generator, use:
+
+- **`simule/browser`**: Dynamic version included in this package
+- **Faker.js directly** with manual type definitions
+- **JSON Schema** based generators
+- **Runtime type validation libraries** like Zod or io-ts

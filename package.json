@@ -1,17 +1,25 @@
 {
   "name": "simule",
-  "version": "1.0.1",
-  "description": "A TypeScript fixture generator using ts-morph and faker.js for runtime type inference.",
+  "version": "2.0.0",
+  "description": "A Node.js TypeScript fixture generator using ts-morph and faker.js for runtime type inference. Browser incompatible.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "license": "MIT",
   "sideEffects": false,
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./browser": {
+      "types": "./dist/browser-dynamic.d.ts",
+      "import": "./dist/browser-dynamic.js",
+      "require": "./dist/browser-dynamic.js"
     }
   },
   "keywords": [
