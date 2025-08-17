@@ -1,6 +1,6 @@
 {
   "name": "simule",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A Node.js TypeScript fixture generator using ts-morph and faker.js for runtime type inference. Browser incompatible.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

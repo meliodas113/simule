@@ -2,8 +2,6 @@
 
 A TypeScript fixture generator using runtime type inference with ts-morph and faker.js.
 
-> ⚠️ **Important**: This package is designed for **Node.js environments only**. It cannot be used in browsers due to its dependency on `ts-morph` which requires Node.js file system access.
-
 ## Installation
 
 Install using npm or Yarn:
@@ -17,8 +15,6 @@ yarn add simule
 ```
 
 ## Usage
-
-**⚠️ Node.js Only**: This package must be used in a Node.js environment (not in browsers).
 
 Ensure your project has a `tsconfig.json` and your types are defined in included files.
 
