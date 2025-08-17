@@ -6,6 +6,7 @@ import {
   makeDynamic,
   arrayOf as arrayOfDynamic,
   isOneOf as isOneOfDynamic,
+  defineType,
 } from "simule";
 
 // Example 1: Node.js version (requires ts-morph, works with TypeScript files)
@@ -43,33 +44,69 @@ interface BrowserTagItem {
   isActive: boolean;
 }
 
-// Create template object that matches your interface
-const ProductTemplate: BrowserProduct = {
+// Solution 1: Use defineType helper (RECOMMENDED for complex types)
+const ProductTemplate1 = defineType<BrowserProduct>({
   id: "", // Will generate UUID
   title: "", // Will generate random string
   price: 0, // Will generate random number
-  tags: [], // Will generate array of TagItems
+  tags: arrayOf(() => ({ name: "", value: 0, isActive: false }), {
+    min: 3,
+    max: 8,
+  }),
   inStock: false, // Will generate random boolean
+});
+
+// Solution 2: Provide multiple sample items
+const ProductTemplate2: BrowserProduct = {
+  id: "",
+  title: "",
+  price: 0,
+  tags: [
+    { name: "", value: 0, isActive: false },
+    { name: "", value: 0, isActive: false },
+    { name: "", value: 0, isActive: false },
+  ], // Will generate 3-8 TagItems
+  inStock: false,
 };
 
-// Generate fixture using the dynamic browser solution
-const browserFixture = makeDynamic(ProductTemplate, {
+// Solution 3: Use arrayOf in overrides
+const ProductTemplate3: BrowserProduct = {
+  id: "",
+  title: "",
+  price: 0,
+  tags: [], // Empty array
+  inStock: false,
+};
+
+// Generate fixtures using different approaches
+const browserFixture1 = makeDynamic(ProductTemplate1, {
   overrides: {
     title: isOneOfDynamic(["Title 1", "Title 2"]),
     price: 9.99,
-    tags: arrayOfDynamic(
-      () =>
-        makeDynamic({
-          name: "",
-          value: 0,
-          isActive: false,
-        }),
-      { min: 5, max: 10 }
-    ),
   },
 });
 
-console.log("Browser Product Fixture:", browserFixture);
+const browserFixture2 = makeDynamic(ProductTemplate2, {
+  overrides: {
+    title: isOneOfDynamic(["Title 1", "Title 2"]),
+    price: 9.99,
+  },
+});
+
+const browserFixture3 = makeDynamic(ProductTemplate3, {
+  overrides: {
+    title: isOneOfDynamic(["Title 1", "Title 2"]),
+    price: 9.99,
+    tags: arrayOfDynamic(() => ({ name: "", value: 0, isActive: false }), {
+      min: 5,
+      max: 10,
+    }),
+  },
+});
+
+console.log("Browser Product Fixture 1 (defineType):", browserFixture1);
+console.log("Browser Product Fixture 2 (multiple samples):", browserFixture2);
+console.log("Browser Product Fixture 3 (overrides):", browserFixture3);
 
 // Example 3: Different types work automatically
 interface User {
@@ -85,18 +122,18 @@ interface User {
   lastLogin: Date | null;
 }
 
-const UserTemplate: User = {
+const UserTemplate = defineType<User>({
   id: "",
   email: "",
   profile: {
     firstName: "",
     lastName: "",
     age: 0,
-    preferences: [],
+    preferences: arrayOf(() => "", { min: 2, max: 5 }), // Array of strings
   },
   isVerified: false,
   lastLogin: null,
-};
+});
 
 const userFixture = makeDynamic(UserTemplate, {
   overrides: {
@@ -120,4 +157,36 @@ console.log("String Array:", stringArray);
 console.log("Number Array:", numberArray);
 console.log("Boolean Array:", booleanArray);
 
+// Example 5: Complex nested arrays
+interface Category {
+  id: string;
+  name: string;
+  products: BrowserProduct[];
+  subcategories?: Category[];
+}
+
+const CategoryTemplate: Category = {
+  id: "",
+  name: "",
+  products: [], // Will be overridden
+  subcategories: [], // Will be overridden
+};
+
+const categoryFixture = makeDynamic(CategoryTemplate, {
+  overrides: {
+    products: arrayOfDynamic(() => ProductTemplate1, { min: 2, max: 5 }),
+    subcategories: arrayOfDynamic(
+      () => ({
+        id: "",
+        name: "",
+        products: arrayOfDynamic(() => ProductTemplate1, { min: 1, max: 3 }),
+        subcategories: [],
+      }),
+      { min: 0, max: 3 }
+    ),
+  },
+});
+console.log("Complex Category Fixture:", categoryFixture);
+
 // The beauty: NO HARDCODING! Works with ANY type you provide!
+// And you have full control over array sizes!

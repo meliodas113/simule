@@ -44,7 +44,7 @@ const fixture = make<Product>("Product", {
 For browser environments, use the dynamic version that works with ANY type:
 
 ```ts
-import { makeDynamic, arrayOf, isOneOf } from "simule/browser";
+import { makeDynamic, arrayOf, isOneOf, defineType } from "simule/browser";
 
 interface Product {
   id: string;
@@ -59,23 +59,80 @@ interface TagItem {
   value: number;
 }
 
-// Create template object that matches your interface
-const ProductTemplate: Product = {
+// Solution 1: Use defineType helper (RECOMMENDED for complex types)
+const ProductTemplate1 = defineType<Product>({
   id: "", // Will generate UUID
   title: "", // Will generate random string
   price: 0, // Will generate random number
-  tags: [], // Will generate array of TagItems
+  tags: arrayOf(() => ({ name: "", value: 0 }), { min: 3, max: 8 }),
   inStock: false, // Will generate random boolean
+});
+
+// Solution 2: Provide multiple sample items
+const ProductTemplate2: Product = {
+  id: "",
+  title: "",
+  price: 0,
+  tags: [
+    { name: "", value: 0 },
+    { name: "", value: 0 },
+    { name: "", value: 0 },
+  ], // Will generate 3-8 TagItems
+  inStock: false,
 };
 
-// Generate fixtures using the dynamic solution
-const fixture = makeDynamic(ProductTemplate, {
+// Solution 3: Use arrayOf in overrides
+const ProductTemplate3: Product = {
+  id: "",
+  title: "",
+  price: 0,
+  tags: [], // Empty array
+  inStock: false,
+};
+
+// Generate fixtures using different approaches
+const fixture1 = makeDynamic(ProductTemplate1, {
   overrides: {
     title: isOneOf(["Title 1", "Title 2"]),
     price: 9.99,
   },
 });
+
+const fixture2 = makeDynamic(ProductTemplate2, {
+  overrides: {
+    title: isOneOf(["Title 1", "Title 2"]),
+    price: 9.99,
+  },
+});
+
+const fixture3 = makeDynamic(ProductTemplate3, {
+  overrides: {
+    title: isOneOf(["Title 1", "Title 2"]),
+    price: 9.99,
+    tags: arrayOf(() => ({ name: "", value: 0 }), { min: 5, max: 10 }),
+  },
+});
 ```
+
+### Array Handling Strategies
+
+**Solution 1: `defineType` Helper (Recommended)**
+
+- Best for complex nested types
+- Automatically handles type inference
+- Clean and readable syntax
+
+**Solution 2: Multiple Sample Items**
+
+- Simple approach for basic types
+- Good for small, fixed-size arrays
+- Easy to understand
+
+**Solution 3: Overrides with `arrayOf`**
+
+- Maximum flexibility
+- Control array size at generation time
+- Good for dynamic requirements
 
 ### Browser Version Features
 
@@ -86,6 +143,7 @@ const fixture = makeDynamic(ProductTemplate, {
 - **Complex Type Support**: Handles nested objects, arrays, unions, and custom types
 - **Type Safety**: Full TypeScript support
 - **No Metadata Required**: Just create template objects and get fixtures
+- **Array Size Control**: Full control over array sizes with `min` and `max` parameters
 
 See `example.ts` for comprehensive examples.
 
