@@ -44,7 +44,7 @@ const fixture = make<Product>("Product", {
 For browser environments, use the dynamic version that works with ANY type:
 
 ```ts
-import { makeDynamic, arrayOf, isOneOf, defineType } from "simule/browser";
+import { makeDynamic, arrayOf, isOneOf, defineType } from "simule";
 
 interface Product {
   id: string;
